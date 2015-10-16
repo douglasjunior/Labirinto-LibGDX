@@ -15,7 +15,7 @@ public class TelaJogo extends TelaBase {
     private OrthographicCamera camera;
     private ShapeRenderer renderer;
 
-    private Array<Array<Bloco>> campo = new Array<Array<Bloco>>();
+    private Array<Array<Bloco>> linhas = new Array<Array<Bloco>>();
 
     public TelaJogo(MainGame game) {
         super(game);
@@ -40,10 +40,12 @@ public class TelaJogo extends TelaBase {
     }
 
     private void preencherLinha(BlocoTipo... tipos) {
+        // pega posição Y desse bloco
+        int posY = linhas.size;
         Array<Bloco> linha = new Array<Bloco>();
-        int num = campo.size;
         for (BlocoTipo tipo : tipos) {
-            Vector2 posicao = new Vector2(linha.size, num);
+            int posX = linha.size;
+            Vector2 posicao = new Vector2(posX, posY);
             switch (tipo) {
                 case SIMPLES:
                     linha.add(new Bloco(posicao, tipo, 1));
@@ -56,7 +58,7 @@ public class TelaJogo extends TelaBase {
                     break;
             }
         }
-        campo.add(linha);
+        linhas.add(linha);
     }
 
     private float tam = 50, initX = 50, initY = 50;
@@ -69,11 +71,12 @@ public class TelaJogo extends TelaBase {
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        for (int i = 0; i < campo.size; i++) {
-            Array<Bloco> linha = campo.get(i);
+        for (int i = 0; i < linhas.size; i++) {
+            Array<Bloco> linha = linhas.get(i);
             for (int j = 0; j < linha.size; j++) {
                 Bloco bloco = linha.get(j);
-                switch (bloco.getTipo()){
+
+                switch (bloco.getTipo()) {
                     case VAZIO:
                         renderer.setColor(0f, 0f, 1f, 1);
                         break;
@@ -87,9 +90,13 @@ public class TelaJogo extends TelaBase {
                         renderer.setColor(.5f, .5f, .5f, 1);
                         break;
                 }
-                renderer.rect(initX + bloco.getPosicao().x * tam + 3 * bloco.getPosicao().x,
-                        initY + bloco.getPosicao().y * tam + 3 * bloco.getPosicao().y,
-                        tam, tam);
+
+                float bordaX =  10 * bloco.getPosicao().x;
+                float x = initX + bloco.getPosicao().x * tam + bordaX;
+                float bordaY =  10 * bloco.getPosicao().y;
+                float y = initY + bloco.getPosicao().y * tam + bordaY;
+
+                renderer.rect(x, y, tam, tam);
             }
         }
         renderer.end();
